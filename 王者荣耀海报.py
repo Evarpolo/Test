@@ -10,21 +10,19 @@ data_list = json.loads(data_str)
 for data in data_list:
     cname = data['cname']
     ename = data['ename']
-    try:
-        skin_name = data['skin_name'].split('|')
-    except Exception as e:
-        print(e)
-    #print(ename, cname, skin_name)
+    
+    skin_num = 1
+    skin_url = 'http://game.gtimg.cn/images/yxzj/img201606/skin/hero-info/' + str(ename) + '/' + str(ename) + '-bigskin-' + str(skin_num) + '.jpg'
+    skin_data = requests.get(skin_url, headers = headers)
     
     #请求图片数据
-    for skin_num in range (1, len(skin_name) + 1):
+    while(skin_data.status_code != 404):
+        with open('HonorImageTrue\\' + cname + '-皮肤' + str(skin_num) + '.jpg', 'wb') as f:
+            print('正在下载海报', cname + '-皮肤' + str(skin_num))
+            f.write(skin_data.content)
+        skin_num += 1
         skin_url = 'http://game.gtimg.cn/images/yxzj/img201606/skin/hero-info/' + str(ename) + '/' + str(ename) + '-bigskin-' + str(skin_num) + '.jpg'    
         #http://game.gtimg.cn/images/yxzj/img201606/skin/hero-info/525/525-bigskin-2.jpg
         #print(skin_url)
-        skin_data = requests.get(skin_url, headers = headers).content
-        
-        #保存图片
-        with open('HonorImage\\' + cname + '-' + skin_name[skin_num - 1] + '.jpg', 'wb') as f:
-            print('正在下载海报', cname + '-' + skin_name[skin_num - 1])
-            f.write(skin_data)
-print("下载完成！感谢使用！")
+        skin_data = requests.get(skin_url, headers = headers)
+print('下载完成，感谢您的使用！')
